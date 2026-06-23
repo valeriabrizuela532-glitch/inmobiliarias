@@ -1,0 +1,1279 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Inmobiliaria</title>
+<style>
+  :root {
+    --primary: #1a3c5e;
+    --primary-light: #2a5280;
+    --accent: #c8963e;
+    --accent-light: #e8b05a;
+    --bg: #f5f4f0;
+    --white: #ffffff;
+    --gray-100: #f0eeea;
+    --gray-200: #e0ddd6;
+    --gray-400: #9e9b94;
+    --gray-600: #5c5a55;
+    --gray-800: #2c2b28;
+    --text: #1e1d1a;
+    --shadow: 0 2px 12px rgba(0,0,0,0.08);
+    --shadow-hover: 0 6px 24px rgba(0,0,0,0.14);
+    --radius: 10px;
+    --radius-sm: 6px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', Arial, sans-serif; background: var(--bg); color: var(--text); }
+  a { text-decoration: none; color: inherit; }
+
+  /* ── TOPBAR ── */
+  .topbar {
+    background: var(--primary);
+    color: rgba(255,255,255,0.8);
+    font-size: 13px;
+    padding: 7px 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  .topbar a { color: rgba(255,255,255,0.85); display: inline-flex; align-items: center; gap: 5px; }
+  .topbar a:hover { color: var(--accent-light); }
+  .topbar-left, .topbar-right { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+  .topbar-icon { font-size: 14px; }
+
+  /* ── HEADER ── */
+  header {
+    background: var(--white);
+    padding: 0 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 72px;
+    border-bottom: 2px solid var(--accent);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+  }
+  .logo-area { display: flex; align-items: center; gap: 14px; }
+  .logo-img { height: 52px; width: 52px; object-fit: contain; border-radius: 8px; display: none; }
+  .logo-img.loaded { display: block; }
+  .logo-text { font-size: 22px; font-weight: 700; color: var(--primary); letter-spacing: -0.5px; }
+  .logo-text span { color: var(--accent); }
+  .logo-slogan { font-size: 11px; color: var(--gray-400); letter-spacing: 0.5px; margin-top: 2px; }
+
+  nav { display: flex; align-items: center; gap: 4px; }
+  nav a {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--gray-600);
+    padding: 8px 14px;
+    border-radius: var(--radius-sm);
+    transition: background 0.15s, color 0.15s;
+  }
+  nav a:hover, nav a.active { background: var(--gray-100); color: var(--primary); }
+  .nav-admin-btn {
+    margin-left: 8px;
+    background: var(--primary);
+    color: white !important;
+    padding: 7px 14px;
+    border-radius: var(--radius-sm);
+    font-size: 13px;
+    cursor: pointer;
+    border: none;
+    font-weight: 500;
+    font-family: inherit;
+    transition: background 0.15s;
+  }
+  .nav-admin-btn:hover { background: var(--primary-light); }
+
+  /* ── HERO ── */
+  .hero {
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 60%, #1e5070 100%);
+    padding: 56px 24px 48px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+  }
+  .hero h1 { font-size: 34px; font-weight: 700; color: white; margin-bottom: 10px; position: relative; }
+  .hero p { font-size: 16px; color: rgba(255,255,255,0.75); margin-bottom: 32px; position: relative; }
+
+  /* ── SEARCH BOX ── */
+  .search-box {
+    background: white;
+    border-radius: var(--radius);
+    padding: 20px 24px;
+    max-width: 780px;
+    margin: 0 auto;
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.18);
+    position: relative;
+  }
+  .search-field { display: flex; flex-direction: column; gap: 5px; flex: 1; min-width: 130px; }
+  .search-field label { font-size: 11px; font-weight: 600; color: var(--gray-600); text-transform: uppercase; letter-spacing: 0.5px; }
+  .search-field select, .search-field input {
+    border: 1.5px solid var(--gray-200);
+    border-radius: var(--radius-sm);
+    padding: 9px 12px;
+    font-size: 14px;
+    color: var(--text);
+    background: white;
+    outline: none;
+    transition: border-color 0.15s;
+    font-family: inherit;
+  }
+  .search-field select:focus, .search-field input:focus { border-color: var(--primary); }
+  .btn-search {
+    background: var(--accent);
+    color: white;
+    border: none;
+    border-radius: var(--radius-sm);
+    padding: 10px 24px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.15s;
+    white-space: nowrap;
+    font-family: inherit;
+    height: 42px;
+    align-self: flex-end;
+  }
+  .btn-search:hover { background: var(--accent-light); }
+
+  /* ── MAIN CONTENT ── */
+  .main { max-width: 1200px; margin: 0 auto; padding: 32px 24px; }
+
+  .section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  .section-title { font-size: 20px; font-weight: 700; color: var(--primary); }
+  .results-count { font-size: 13px; color: var(--gray-400); }
+
+  /* ── GRID ── */
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+    gap: 22px;
+  }
+
+  /* ── CARD ── */
+  .card {
+    background: white;
+    border-radius: var(--radius);
+    overflow: hidden;
+    box-shadow: var(--shadow);
+    transition: box-shadow 0.2s, transform 0.2s;
+    display: flex;
+    flex-direction: column;
+  }
+  .card:hover { box-shadow: var(--shadow-hover); transform: translateY(-3px); }
+
+  .card-gallery { position: relative; height: 200px; background: var(--gray-100); overflow: hidden; }
+  .card-gallery img {
+    width: 100%; height: 100%; object-fit: cover;
+    position: absolute; top: 0; left: 0;
+    opacity: 0; transition: opacity 0.3s;
+  }
+  .card-gallery img.active { opacity: 1; }
+  .card-gallery .placeholder {
+    width: 100%; height: 100%;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    color: var(--gray-400); gap: 8px;
+    font-size: 13px;
+  }
+  .card-gallery .placeholder svg { width: 48px; height: 48px; opacity: 0.4; }
+  .gallery-nav {
+    position: absolute; bottom: 8px; right: 8px;
+    display: flex; gap: 4px;
+  }
+  .gallery-btn {
+    background: rgba(0,0,0,0.45); color: white;
+    border: none; border-radius: 4px;
+    width: 26px; height: 26px; cursor: pointer;
+    font-size: 14px; display: flex; align-items: center; justify-content: center;
+    transition: background 0.15s;
+  }
+  .gallery-btn:hover { background: rgba(0,0,0,0.7); }
+  .gallery-dots { position: absolute; bottom: 10px; left: 0; right: 0; display: flex; justify-content: center; gap: 5px; pointer-events: none; }
+  .gallery-dot { width: 6px; height: 6px; border-radius: 50%; background: rgba(255,255,255,0.5); }
+  .gallery-dot.active { background: white; }
+
+  .badge {
+    position: absolute; top: 10px; left: 10px;
+    font-size: 11px; font-weight: 700;
+    padding: 3px 10px; border-radius: 20px;
+    text-transform: uppercase; letter-spacing: 0.5px;
+  }
+  .badge-venta { background: var(--primary); color: white; }
+  .badge-alquiler { background: var(--accent); color: white; }
+
+  .card-body { padding: 14px 16px; flex: 1; display: flex; flex-direction: column; }
+  .card-tipo { font-size: 11px; font-weight: 700; color: var(--accent); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; }
+  .card-title { font-size: 16px; font-weight: 700; color: var(--primary); margin-bottom: 4px; line-height: 1.3; }
+  .card-address { font-size: 13px; color: var(--gray-400); margin-bottom: 10px; display: flex; align-items: center; gap: 4px; }
+  .card-price { font-size: 20px; font-weight: 700; color: var(--text); margin-bottom: 10px; }
+  .card-price span { font-size: 13px; font-weight: 400; color: var(--gray-400); }
+
+  .card-features { display: flex; gap: 14px; margin-bottom: 14px; flex-wrap: wrap; }
+  .feat { font-size: 12px; color: var(--gray-600); display: flex; align-items: center; gap: 4px; }
+  .feat svg { width: 14px; height: 14px; opacity: 0.6; }
+
+  .card-desc { font-size: 13px; color: var(--gray-600); line-height: 1.5; margin-bottom: 14px; flex: 1;
+    display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+
+  .card-actions { display: flex; gap: 8px; }
+  .btn-wa {
+    flex: 1; background: #25D366; color: white; border: none;
+    border-radius: var(--radius-sm); padding: 9px 12px;
+    font-size: 13px; font-weight: 600; cursor: pointer;
+    display: flex; align-items: center; justify-content: center; gap: 6px;
+    transition: background 0.15s; font-family: inherit;
+  }
+  .btn-wa:hover { background: #1da851; }
+  .btn-mail {
+    flex: 1; background: white; color: var(--primary);
+    border: 1.5px solid var(--primary); border-radius: var(--radius-sm);
+    padding: 9px 12px; font-size: 13px; font-weight: 600; cursor: pointer;
+    display: flex; align-items: center; justify-content: center; gap: 6px;
+    transition: background 0.15s, color 0.15s; font-family: inherit;
+  }
+  .btn-mail:hover { background: var(--primary); color: white; }
+
+  /* ── EMPTY STATE ── */
+  .empty-state {
+    text-align: center; padding: 64px 24px;
+    color: var(--gray-400);
+  }
+  .empty-state svg { width: 64px; height: 64px; opacity: 0.3; margin-bottom: 16px; }
+  .empty-state p { font-size: 16px; }
+
+  /* ── FOOTER ── */
+  footer {
+    background: var(--primary);
+    color: rgba(255,255,255,0.8);
+    padding: 40px 24px 20px;
+    margin-top: 48px;
+  }
+  .footer-grid {
+    max-width: 1000px; margin: 0 auto;
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 32px; margin-bottom: 32px;
+  }
+  .footer-col h4 { color: var(--accent-light); font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 12px; }
+  .footer-col p, .footer-col a { font-size: 14px; color: rgba(255,255,255,0.7); line-height: 1.8; }
+  .footer-col a:hover { color: var(--accent-light); }
+  .footer-logo-text { font-size: 20px; font-weight: 700; color: white; margin-bottom: 6px; }
+  .footer-bottom { border-top: 1px solid rgba(255,255,255,0.1); padding-top: 20px; text-align: center; font-size: 12px; color: rgba(255,255,255,0.4); max-width: 1000px; margin: 0 auto; }
+
+  /* ── ADMIN PANEL ── */
+  .modal-overlay {
+    display: none; position: fixed; inset: 0;
+    background: rgba(0,0,0,0.6); z-index: 1000;
+    align-items: flex-start; justify-content: center;
+    padding: 20px; overflow-y: auto;
+  }
+  .modal-overlay.open { display: flex; }
+  .modal {
+    background: white; border-radius: var(--radius);
+    width: 100%; max-width: 680px;
+    margin: auto;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.25);
+  }
+  .modal-header {
+    background: var(--primary); color: white;
+    padding: 16px 20px; border-radius: var(--radius) var(--radius) 0 0;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .modal-header h3 { font-size: 17px; font-weight: 700; }
+  .modal-close { background: rgba(255,255,255,0.15); border: none; color: white; width: 32px; height: 32px; border-radius: 6px; cursor: pointer; font-size: 18px; display: flex; align-items: center; justify-content: center; }
+  .modal-close:hover { background: rgba(255,255,255,0.25); }
+  .modal-body { padding: 20px; }
+  .modal-tabs { display: flex; border-bottom: 2px solid var(--gray-200); margin-bottom: 20px; }
+  .tab-btn {
+    padding: 10px 18px; font-size: 14px; font-weight: 600;
+    color: var(--gray-400); border: none; background: none;
+    cursor: pointer; border-bottom: 2px solid transparent;
+    margin-bottom: -2px; transition: color 0.15s; font-family: inherit;
+  }
+  .tab-btn.active { color: var(--primary); border-bottom-color: var(--primary); }
+  .tab-content { display: none; }
+  .tab-content.active { display: block; }
+
+  /* form */
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; }
+  .form-row.full { grid-template-columns: 1fr; }
+  .form-row.three { grid-template-columns: 1fr 1fr 1fr; }
+  .form-group { display: flex; flex-direction: column; gap: 5px; }
+  .form-group label { font-size: 12px; font-weight: 600; color: var(--gray-600); text-transform: uppercase; letter-spacing: 0.4px; }
+  .form-group input, .form-group select, .form-group textarea {
+    border: 1.5px solid var(--gray-200); border-radius: var(--radius-sm);
+    padding: 9px 12px; font-size: 14px; color: var(--text);
+    outline: none; transition: border-color 0.15s; font-family: inherit;
+  }
+  .form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color: var(--primary); }
+  .form-group textarea { resize: vertical; min-height: 80px; }
+
+  /* photo upload */
+  .upload-zone {
+    border: 2px dashed var(--gray-200); border-radius: var(--radius-sm);
+    padding: 24px; text-align: center; color: var(--gray-400);
+    cursor: pointer; transition: border-color 0.15s, background 0.15s;
+    position: relative;
+  }
+  .upload-zone:hover { border-color: var(--primary); background: var(--gray-100); }
+  .upload-zone input[type=file] { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
+  .upload-zone svg { width: 32px; height: 32px; margin-bottom: 8px; opacity: 0.5; }
+  .upload-zone p { font-size: 13px; }
+  .photo-preview { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
+  .photo-thumb {
+    width: 72px; height: 72px; border-radius: 6px;
+    object-fit: cover; position: relative;
+    border: 1.5px solid var(--gray-200);
+  }
+  .photo-thumb-wrap { position: relative; display: inline-block; }
+  .photo-thumb-wrap .remove-photo {
+    position: absolute; top: -6px; right: -6px;
+    background: #e24b4a; color: white; border: none;
+    border-radius: 50%; width: 20px; height: 20px;
+    font-size: 12px; cursor: pointer; display: flex;
+    align-items: center; justify-content: center;
+    font-weight: 700; line-height: 1;
+  }
+
+  /* prop list in admin */
+  .admin-prop-list { display: flex; flex-direction: column; gap: 10px; max-height: 400px; overflow-y: auto; }
+  .admin-prop-item {
+    display: flex; align-items: center; gap: 12px;
+    padding: 10px 12px; border: 1.5px solid var(--gray-200);
+    border-radius: var(--radius-sm); background: white;
+  }
+  .admin-prop-thumb { width: 56px; height: 48px; border-radius: 6px; object-fit: cover; background: var(--gray-100); flex-shrink: 0; }
+  .admin-prop-info { flex: 1; min-width: 0; }
+  .admin-prop-info strong { font-size: 14px; color: var(--text); display: block; }
+  .admin-prop-info small { font-size: 12px; color: var(--gray-400); }
+  .admin-prop-btns { display: flex; gap: 6px; flex-shrink: 0; }
+  .btn-edit-sm {
+    background: var(--gray-100); border: 1px solid var(--gray-200);
+    border-radius: var(--radius-sm); padding: 5px 10px;
+    font-size: 12px; cursor: pointer; font-family: inherit; color: var(--gray-600);
+  }
+  .btn-edit-sm:hover { background: var(--gray-200); }
+  .btn-del-sm {
+    background: #fef2f2; border: 1px solid #fecaca;
+    border-radius: var(--radius-sm); padding: 5px 10px;
+    font-size: 12px; cursor: pointer; font-family: inherit; color: #dc2626;
+  }
+  .btn-del-sm:hover { background: #fee2e2; }
+
+  /* site config */
+  .config-logo-preview { width: 80px; height: 80px; border-radius: 10px; object-fit: contain; border: 1.5px solid var(--gray-200); display: none; }
+  .config-logo-preview.loaded { display: block; }
+
+  /* btn-primary */
+  .btn-primary {
+    background: var(--primary); color: white; border: none;
+    border-radius: var(--radius-sm); padding: 10px 20px;
+    font-size: 14px; font-weight: 600; cursor: pointer;
+    font-family: inherit; transition: background 0.15s;
+  }
+  .btn-primary:hover { background: var(--primary-light); }
+  .btn-accent {
+    background: var(--accent); color: white; border: none;
+    border-radius: var(--radius-sm); padding: 10px 20px;
+    font-size: 14px; font-weight: 600; cursor: pointer;
+    font-family: inherit; transition: background 0.15s;
+  }
+  .btn-accent:hover { background: var(--accent-light); }
+  .btn-danger {
+    background: #dc2626; color: white; border: none;
+    border-radius: var(--radius-sm); padding: 10px 20px;
+    font-size: 14px; font-weight: 600; cursor: pointer;
+    font-family: inherit; transition: background 0.15s;
+  }
+
+  /* password screen */
+  .pw-screen { padding: 32px 24px; text-align: center; }
+  .pw-screen h3 { font-size: 18px; font-weight: 700; color: var(--primary); margin-bottom: 8px; }
+  .pw-screen p { font-size: 14px; color: var(--gray-400); margin-bottom: 20px; }
+  .pw-screen input {
+    border: 1.5px solid var(--gray-200); border-radius: var(--radius-sm);
+    padding: 10px 16px; font-size: 15px; width: 100%;
+    max-width: 300px; outline: none; font-family: inherit;
+    text-align: center; letter-spacing: 2px; margin-bottom: 12px;
+  }
+  .pw-screen input:focus { border-color: var(--primary); }
+  .pw-error { color: #dc2626; font-size: 13px; margin-top: 8px; display: none; }
+
+  /* toast */
+  .toast {
+    position: fixed; bottom: 24px; right: 24px;
+    background: var(--primary); color: white;
+    padding: 12px 20px; border-radius: var(--radius-sm);
+    font-size: 14px; font-weight: 500;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+    z-index: 2000; transform: translateY(20px); opacity: 0;
+    transition: all 0.25s; pointer-events: none;
+  }
+  .toast.show { transform: translateY(0); opacity: 1; }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 600px) {
+    .topbar { font-size: 12px; }
+    header { height: 60px; }
+    .logo-text { font-size: 18px; }
+    nav a { padding: 6px 8px; font-size: 13px; }
+    .hero h1 { font-size: 24px; }
+    .search-box { padding: 14px; }
+    .form-row { grid-template-columns: 1fr; }
+    .form-row.three { grid-template-columns: 1fr 1fr; }
+  }
+  @media (max-width: 400px) {
+    nav a:not(.nav-admin-btn) { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <div class="topbar-left" id="topbar-left">
+    <a href="#" id="topbar-phone">
+      <span class="topbar-icon">📞</span>
+      <span id="topbar-phone-text">Sin configurar</span>
+    </a>
+    <a href="#" id="topbar-email">
+      <span class="topbar-icon">✉</span>
+      <span id="topbar-email-text">Sin configurar</span>
+    </a>
+    <span id="topbar-address-text" style="opacity:0.7"></span>
+  </div>
+  <div class="topbar-right">
+    <a href="#" id="topbar-wa" style="color:#4ade80; font-weight:600">
+      <span>💬</span> WhatsApp
+    </a>
+  </div>
+</div>
+
+<!-- HEADER -->
+<header>
+  <div class="logo-area">
+    <img id="header-logo-img" class="logo-img" src="" alt="Logo">
+    <div>
+      <div class="logo-text" id="header-logo-text">Mi <span>Inmobiliaria</span></div>
+      <div class="logo-slogan" id="header-slogan-text">Tu hogar, nuestra prioridad</div>
+    </div>
+  </div>
+  <nav>
+    <a href="#propiedades" class="active">Propiedades</a>
+    <a href="#contacto">Contacto</a>
+    <button class="nav-admin-btn" onclick="openAdmin()">⚙ Admin</button>
+  </nav>
+</header>
+
+<!-- HERO -->
+<section class="hero">
+  <h1>Encontrá tu propiedad ideal</h1>
+  <p id="hero-subtitle">Venta y alquiler de propiedades</p>
+  <div class="search-box">
+    <div class="search-field">
+      <label>Operación</label>
+      <select id="filter-op">
+        <option value="">Todas</option>
+        <option value="venta">Venta</option>
+        <option value="alquiler">Alquiler</option>
+      </select>
+    </div>
+    <div class="search-field">
+      <label>Tipo</label>
+      <select id="filter-tipo">
+        <option value="">Todos</option>
+        <option value="casa">Casa</option>
+        <option value="departamento">Departamento</option>
+        <option value="terreno">Terreno</option>
+        <option value="local">Local</option>
+        <option value="oficina">Oficina</option>
+        <option value="cochera">Cochera</option>
+        <option value="ph">PH</option>
+      </select>
+    </div>
+    <div class="search-field">
+      <label>Ambientes</label>
+      <select id="filter-amb">
+        <option value="">Todos</option>
+        <option value="1">1 ambiente</option>
+        <option value="2">2 ambientes</option>
+        <option value="3">3 ambientes</option>
+        <option value="4">4 ambientes</option>
+        <option value="5">5+</option>
+      </select>
+    </div>
+    <div class="search-field">
+      <label>Buscar</label>
+      <input type="text" id="filter-text" placeholder="Barrio, ciudad...">
+    </div>
+    <button class="btn-search" onclick="renderCards()">🔍 Buscar</button>
+  </div>
+</section>
+
+<!-- MAIN -->
+<main class="main" id="propiedades">
+  <div class="section-header">
+    <div class="section-title">Propiedades disponibles</div>
+    <div class="results-count" id="results-count"></div>
+  </div>
+  <div class="grid" id="cards-grid"></div>
+  <div class="empty-state" id="empty-state" style="display:none">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+    <p>No se encontraron propiedades con esos filtros.</p>
+  </div>
+</main>
+
+<!-- FOOTER -->
+<footer id="contacto">
+  <div class="footer-grid">
+    <div class="footer-col">
+      <div class="footer-logo-text" id="footer-logo-text">Mi Inmobiliaria</div>
+      <p id="footer-slogan">Tu hogar, nuestra prioridad</p>
+    </div>
+    <div class="footer-col">
+      <h4>Contacto</h4>
+      <p id="footer-address">Dirección no configurada</p>
+      <a href="#" id="footer-phone">Teléfono no configurado</a><br>
+      <a href="#" id="footer-email-link">Email no configurado</a>
+    </div>
+    <div class="footer-col">
+      <h4>¿Qué buscás?</h4>
+      <a href="#" onclick="setFilter('tipo','casa');renderCards();return false">Casas</a><br>
+      <a href="#" onclick="setFilter('tipo','departamento');renderCards();return false">Departamentos</a><br>
+      <a href="#" onclick="setFilter('tipo','terreno');renderCards();return false">Terrenos</a><br>
+      <a href="#" onclick="setFilter('tipo','local');renderCards();return false">Locales</a><br>
+      <a href="#" onclick="setFilter('op','alquiler');renderCards();return false">Alquileres</a>
+    </div>
+  </div>
+  <div class="footer-bottom" id="footer-bottom">© 2025 Mi Inmobiliaria. Todos los derechos reservados.</div>
+</footer>
+
+<!-- ═══ ADMIN MODAL ═══ -->
+<div class="modal-overlay" id="admin-modal">
+  <div class="modal">
+    <div class="modal-header">
+      <h3 id="modal-title">Panel de Administración</h3>
+      <button class="modal-close" onclick="closeAdmin()">×</button>
+    </div>
+    <div class="modal-body" id="modal-body">
+      <!-- password screen shown first -->
+      <div class="pw-screen" id="pw-screen">
+        <h3>🔒 Acceso restringido</h3>
+        <p>Ingresá la contraseña para administrar</p>
+        <input type="password" id="pw-input" placeholder="Contraseña" onkeydown="if(event.key==='Enter')checkPw()">
+        <br>
+        <button class="btn-primary" onclick="checkPw()">Ingresar</button>
+        <p class="pw-error" id="pw-error">Contraseña incorrecta</p>
+      </div>
+
+      <!-- admin panel (hidden until pw ok) -->
+      <div id="admin-panel" style="display:none">
+        <div class="modal-tabs">
+          <button class="tab-btn active" onclick="switchTab('propiedades',this)">🏠 Propiedades</button>
+          <button class="tab-btn" onclick="switchTab('nueva',this)">➕ Agregar</button>
+          <button class="tab-btn" onclick="switchTab('config',this)">⚙ Datos del sitio</button>
+          <button class="tab-btn" onclick="switchTab('password',this)">🔑 Contraseña</button>
+        </div>
+
+        <!-- TAB: LISTA PROPIEDADES -->
+        <div class="tab-content active" id="tab-propiedades">
+          <div class="admin-prop-list" id="admin-prop-list"></div>
+          <div id="admin-empty" style="text-align:center;color:var(--gray-400);padding:24px;display:none;font-size:14px">
+            No hay propiedades cargadas aún.
+          </div>
+        </div>
+
+        <!-- TAB: NUEVA / EDITAR PROPIEDAD -->
+        <div class="tab-content" id="tab-nueva">
+          <input type="hidden" id="edit-id" value="">
+          <div class="form-row">
+            <div class="form-group">
+              <label>Título de la propiedad</label>
+              <input type="text" id="f-titulo" placeholder="Casa en Yerba Buena">
+            </div>
+            <div class="form-group">
+              <label>Dirección</label>
+              <input type="text" id="f-direccion" placeholder="Av. Aconquija 1234">
+            </div>
+          </div>
+          <div class="form-row three">
+            <div class="form-group">
+              <label>Operación</label>
+              <select id="f-op">
+                <option value="venta">Venta</option>
+                <option value="alquiler">Alquiler</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Tipo</label>
+              <select id="f-tipo">
+                <option value="casa">Casa</option>
+                <option value="departamento">Departamento</option>
+                <option value="terreno">Terreno</option>
+                <option value="local">Local</option>
+                <option value="oficina">Oficina</option>
+                <option value="cochera">Cochera</option>
+                <option value="ph">PH</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Moneda</label>
+              <select id="f-moneda">
+                <option value="USD">USD</option>
+                <option value="$">Pesos</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-row three">
+            <div class="form-group">
+              <label>Precio</label>
+              <input type="text" id="f-precio" placeholder="120000">
+            </div>
+            <div class="form-group">
+              <label>Período (alquiler)</label>
+              <select id="f-periodo">
+                <option value="">-</option>
+                <option value="/mes">/mes</option>
+                <option value="/día">/día</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Superficie m²</label>
+              <input type="number" id="f-metros" placeholder="120">
+            </div>
+          </div>
+          <div class="form-row three">
+            <div class="form-group">
+              <label>Dormitorios</label>
+              <input type="number" id="f-dorm" placeholder="3" min="0">
+            </div>
+            <div class="form-group">
+              <label>Baños</label>
+              <input type="number" id="f-banos" placeholder="2" min="0">
+            </div>
+            <div class="form-group">
+              <label>Ambientes</label>
+              <input type="number" id="f-amb" placeholder="4" min="0">
+            </div>
+          </div>
+          <div class="form-row full">
+            <div class="form-group">
+              <label>Descripción</label>
+              <textarea id="f-desc" placeholder="Descripción de la propiedad..."></textarea>
+            </div>
+          </div>
+
+          <!-- FOTOS -->
+          <div style="margin-bottom:14px">
+            <label style="font-size:12px;font-weight:600;color:var(--gray-600);text-transform:uppercase;letter-spacing:0.4px;display:block;margin-bottom:8px">Fotos</label>
+            <div class="upload-zone" id="upload-zone">
+              <input type="file" accept="image/*" multiple id="file-input" onchange="handleFiles(this.files)">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+              <p>Arrastrá fotos o hacé clic para seleccionar</p>
+              <p style="font-size:11px;margin-top:4px">JPG, PNG, WEBP · Podés subir varias a la vez</p>
+            </div>
+            <div class="photo-preview" id="photo-preview"></div>
+          </div>
+
+          <div style="display:flex;gap:10px;flex-wrap:wrap">
+            <button class="btn-primary" onclick="saveProp()">💾 Guardar propiedad</button>
+            <button class="btn-accent" style="background:var(--gray-100);color:var(--gray-600);border:1px solid var(--gray-200)" onclick="clearForm()">Limpiar</button>
+          </div>
+        </div>
+
+        <!-- TAB: CONFIG SITIO -->
+        <div class="tab-content" id="tab-config">
+          <div class="form-row">
+            <div class="form-group">
+              <label>Nombre de la inmobiliaria</label>
+              <input type="text" id="c-nombre" placeholder="Mi Inmobiliaria">
+            </div>
+            <div class="form-group">
+              <label>Slogan</label>
+              <input type="text" id="c-slogan" placeholder="Tu hogar, nuestra prioridad">
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Domicilio</label>
+              <input type="text" id="c-domicilio" placeholder="Av. Ejemplo 123, Ciudad">
+            </div>
+            <div class="form-group">
+              <label>Teléfono</label>
+              <input type="text" id="c-telefono" placeholder="381 555-1234">
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Email de contacto</label>
+              <input type="email" id="c-email" placeholder="info@inmobiliaria.com">
+            </div>
+            <div class="form-group">
+              <label>WhatsApp (con código país)</label>
+              <input type="text" id="c-wa" placeholder="5493814123456">
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Facebook (URL)</label>
+              <input type="text" id="c-facebook" placeholder="https://facebook.com/...">
+            </div>
+            <div class="form-group">
+              <label>Instagram (URL)</label>
+              <input type="text" id="c-instagram" placeholder="https://instagram.com/...">
+            </div>
+          </div>
+          <div class="form-row full">
+            <div class="form-group">
+              <label>Logo (imagen)</label>
+              <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+                <img id="config-logo-preview" class="config-logo-preview" src="" alt="Logo">
+                <div class="upload-zone" style="flex:1;min-width:180px;padding:14px">
+                  <input type="file" accept="image/*" id="logo-file-input" onchange="handleLogoFile(this)">
+                  <p style="font-size:13px">Clic para seleccionar logo</p>
+                  <p style="font-size:11px;margin-top:2px">PNG recomendado (fondo transparente)</p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <button class="btn-primary" onclick="saveConfig()">💾 Guardar datos del sitio</button>
+        </div>
+
+        <!-- TAB: CAMBIAR CONTRASEÑA -->
+        <div class="tab-content" id="tab-password">
+          <div style="max-width:360px">
+            <div class="form-group" style="margin-bottom:12px">
+              <label>Contraseña actual</label>
+              <input type="password" id="pw-actual" placeholder="••••••••">
+            </div>
+            <div class="form-group" style="margin-bottom:12px">
+              <label>Nueva contraseña</label>
+              <input type="password" id="pw-nueva" placeholder="••••••••">
+            </div>
+            <div class="form-group" style="margin-bottom:16px">
+              <label>Repetir nueva contraseña</label>
+              <input type="password" id="pw-repetir" placeholder="••••••••">
+            </div>
+            <button class="btn-primary" onclick="changePw()">🔑 Cambiar contraseña</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script type="module">
+import {
+  onPropsChange, addProp, updateProp, deleteProp as dbDeleteProp,
+  getConfig, saveConfig as dbSaveConfig, onConfigChange,
+  getPasswordHash, savePasswordHash, sha256
+} from "./js/db.js";
+
+// ═══════════════════════════════════════════════════
+//  ESTADO LOCAL (cache de lo que viene de Firebase)
+// ═══════════════════════════════════════════════════
+let _props  = [];   // array de props con id
+let _config = {};
+let _pwHash = "";
+
+// Exponemos las funciones al ámbito global para que los onclick del HTML funcionen
+window.openAdmin     = openAdmin;
+window.closeAdmin    = closeAdmin;
+window.checkPw       = checkPw;
+window.changePw      = changePw;
+window.switchTab     = switchTab;
+window.saveProp      = saveProp;
+window.clearForm     = clearForm;
+window.editProp      = editProp;
+window.deleteProp    = deleteProp;
+window.saveConfig    = saveConfig;
+window.handleFiles   = handleFiles;
+window.removePhoto   = removePhoto;
+window.handleLogoFile= handleLogoFile;
+window.renderCards   = renderCards;
+window.setFilter     = setFilter;
+window.nextPhoto     = nextPhoto;
+window.prevPhoto     = prevPhoto;
+
+// ═══════════════════════════════════════════════════
+//  TOAST
+// ═══════════════════════════════════════════════════
+function showToast(msg, dur=2800) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), dur);
+}
+
+// ═══════════════════════════════════════════════════
+//  RENDER CARDS
+// ═══════════════════════════════════════════════════
+function setFilter(field, val) {
+  if(field==='op')   document.getElementById('filter-op').value   = val;
+  if(field==='tipo') document.getElementById('filter-tipo').value = val;
+}
+
+function formatPrice(p) {
+  const n = parseFloat(String(p).replace(/[^\d.]/g,''));
+  if(isNaN(n)) return p;
+  return n.toLocaleString('es-AR');
+}
+
+function renderCards() {
+  const op   = document.getElementById('filter-op').value;
+  const tipo = document.getElementById('filter-tipo').value;
+  const amb  = document.getElementById('filter-amb').value;
+  const txt  = document.getElementById('filter-text').value.toLowerCase();
+
+  let props = _props.filter(p => {
+    if(op   && p.op   !== op)   return false;
+    if(tipo && p.tipo !== tipo) return false;
+    if(amb  && String(p.amb) !== amb && !(amb==='5' && parseInt(p.amb)>=5)) return false;
+    if(txt  && !((p.titulo||'')+(p.direccion||'')+(p.desc||'')).toLowerCase().includes(txt)) return false;
+    return true;
+  });
+
+  const grid  = document.getElementById('cards-grid');
+  const empty = document.getElementById('empty-state');
+  const count = document.getElementById('results-count');
+  count.textContent = props.length + ' propiedad' + (props.length!==1?'es':'') + ' encontrada' + (props.length!==1?'s':'');
+  grid.innerHTML = '';
+
+  if(!props.length) { empty.style.display='block'; return; }
+  empty.style.display = 'none';
+
+  const wa   = _config.wa   || '';
+  const email= _config.email|| '';
+
+  props.forEach((p,i) => {
+    const photos = p.photos || [];
+    const hasPic = photos.length > 0;
+
+    let galleryHtml = '';
+    if(hasPic) {
+      galleryHtml = photos.map((src,j) =>
+        `<img src="${src}" class="${j===0?'active':''}" alt="foto ${j+1}">`
+      ).join('');
+      if(photos.length > 1) {
+        galleryHtml += `
+          <div class="gallery-dots">${photos.map((_,j)=>`<div class="gallery-dot${j===0?' active':''}"></div>`).join('')}</div>
+          <div class="gallery-nav">
+            <button class="gallery-btn" onclick="prevPhoto(this,${i})">‹</button>
+            <button class="gallery-btn" onclick="nextPhoto(this,${i})">›</button>
+          </div>`;
+      }
+    } else {
+      galleryHtml = `<div class="placeholder">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+        <span>Sin foto</span>
+      </div>`;
+    }
+
+    const priceStr = p.moneda + ' ' + formatPrice(p.precio) + (p.periodo||'');
+
+    let feats = '';
+    if(p.dorm)   feats += `<span class="feat">🛏 ${p.dorm} dorm.</span>`;
+    if(p.banos)  feats += `<span class="feat">🚿 ${p.banos} baños</span>`;
+    if(p.metros) feats += `<span class="feat">📐 ${p.metros} m²</span>`;
+    if(p.amb && !p.dorm) feats += `<span class="feat">🏠 ${p.amb} amb.</span>`;
+
+    const msgWa = encodeURIComponent(`Hola! Me interesa la propiedad: *${p.titulo}* (${p.op}) en ${p.direccion}. ¿Pueden darme más info?`);
+    const msgMail = encodeURIComponent(`Consulta sobre: ${p.titulo} - ${p.op} - ${p.direccion}`);
+    const bodyMail = encodeURIComponent(`Hola,\n\nEstoy interesado/a en la siguiente propiedad:\n\nTítulo: ${p.titulo}\nOperación: ${p.op}\nDirección: ${p.direccion}\nPrecio: ${priceStr}\n\n¿Podrían contactarme?\n\nSaludos.`);
+    const waLink   = wa    ? `https://api.whatsapp.com/send?phone=${wa}&text=${msgWa}` : '#';
+    const mailLink = email ? `mailto:${email}?subject=${msgMail}&body=${bodyMail}` : '#';
+
+    const card = document.createElement('div');
+    card.className = 'card';
+    card.dataset.idx = i;
+    card.innerHTML = `
+      <div class="card-gallery" id="gallery-${i}">
+        ${galleryHtml}
+        <span class="badge badge-${p.op}">${p.op}</span>
+      </div>
+      <div class="card-body">
+        <div class="card-tipo">${p.tipo}</div>
+        <div class="card-title">${p.titulo}</div>
+        <div class="card-address">📍 ${p.direccion||'Consultar dirección'}</div>
+        <div class="card-price">${priceStr}</div>
+        <div class="card-features">${feats}</div>
+        ${p.desc ? `<div class="card-desc">${p.desc}</div>` : ''}
+        <div class="card-actions">
+          <a href="${waLink}" target="_blank"><button class="btn-wa">💬 WhatsApp</button></a>
+          <a href="${mailLink}"><button class="btn-mail">✉ Consultar</button></a>
+        </div>
+      </div>`;
+    grid.appendChild(card);
+  });
+}
+
+// ── Galería de fotos ──
+function getImgsAndDots(galleryEl) {
+  return {
+    imgs: galleryEl.querySelectorAll('img'),
+    dots: galleryEl.querySelectorAll('.gallery-dot')
+  };
+}
+function goToPhoto(galleryEl, idx) {
+  const {imgs, dots} = getImgsAndDots(galleryEl);
+  imgs.forEach((el,i)=>{ el.classList.toggle('active',i===idx); });
+  dots.forEach((el,i)=>{ el.classList.toggle('active',i===idx); });
+  galleryEl.dataset.current = idx;
+}
+function nextPhoto(btn, cardIdx) {
+  const g = document.getElementById('gallery-'+cardIdx);
+  const {imgs} = getImgsAndDots(g);
+  const cur = parseInt(g.dataset.current||0);
+  goToPhoto(g,(cur+1)%imgs.length);
+}
+function prevPhoto(btn, cardIdx) {
+  const g = document.getElementById('gallery-'+cardIdx);
+  const {imgs} = getImgsAndDots(g);
+  const cur = parseInt(g.dataset.current||0);
+  goToPhoto(g,(cur-1+imgs.length)%imgs.length);
+}
+
+// ═══════════════════════════════════════════════════
+//  ADMIN: PASSWORD
+// ═══════════════════════════════════════════════════
+function openAdmin() {
+  document.getElementById('admin-modal').classList.add('open');
+  document.getElementById('pw-screen').style.display = 'block';
+  document.getElementById('admin-panel').style.display = 'none';
+  document.getElementById('pw-input').value = '';
+  document.getElementById('pw-error').style.display = 'none';
+  setTimeout(()=>document.getElementById('pw-input').focus(),100);
+}
+function closeAdmin() {
+  document.getElementById('admin-modal').classList.remove('open');
+}
+async function checkPw() {
+  const val  = document.getElementById('pw-input').value;
+  const hash = await sha256(val);
+  if(hash === _pwHash) {
+    document.getElementById('pw-screen').style.display = 'none';
+    document.getElementById('admin-panel').style.display = 'block';
+    loadAdminPropList();
+    loadConfigForm();
+  } else {
+    document.getElementById('pw-error').style.display = 'block';
+  }
+}
+async function changePw() {
+  const actual  = document.getElementById('pw-actual').value;
+  const nueva   = document.getElementById('pw-nueva').value;
+  const repetir = document.getElementById('pw-repetir').value;
+  if(await sha256(actual) !== _pwHash) { showToast('❌ Contraseña actual incorrecta'); return; }
+  if(!nueva) { showToast('❌ La nueva contraseña no puede estar vacía'); return; }
+  if(nueva !== repetir) { showToast('❌ Las contraseñas no coinciden'); return; }
+  const newHash = await sha256(nueva);
+  await savePasswordHash(newHash);
+  _pwHash = newHash;
+  showToast('✅ Contraseña cambiada');
+  document.getElementById('pw-actual').value='';
+  document.getElementById('pw-nueva').value='';
+  document.getElementById('pw-repetir').value='';
+}
+
+// ═══════════════════════════════════════════════════
+//  ADMIN: TABS
+// ═══════════════════════════════════════════════════
+function switchTab(name, btn) {
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('tab-'+name).classList.add('active');
+  if(name==='propiedades') loadAdminPropList();
+  if(name==='config') loadConfigForm();
+  if(name==='nueva') clearForm();
+}
+
+// ═══════════════════════════════════════════════════
+//  ADMIN: PROP LIST
+// ═══════════════════════════════════════════════════
+function loadAdminPropList() {
+  const list  = document.getElementById('admin-prop-list');
+  const empty = document.getElementById('admin-empty');
+  list.innerHTML = '';
+  if(!_props.length) { empty.style.display='block'; return; }
+  empty.style.display = 'none';
+  _props.forEach((p) => {
+    const thumb = (p.photos||[])[0] || '';
+    const item = document.createElement('div');
+    item.className = 'admin-prop-item';
+    item.innerHTML = `
+      ${thumb ? `<img src="${thumb}" class="admin-prop-thumb" alt="">` : `<div class="admin-prop-thumb" style="display:flex;align-items:center;justify-content:center;color:var(--gray-400);font-size:20px">🏠</div>`}
+      <div class="admin-prop-info">
+        <strong>${p.titulo}</strong>
+        <small>${p.op} · ${p.moneda} ${formatPrice(p.precio)}${p.periodo||''}</small>
+      </div>
+      <div class="admin-prop-btns">
+        <button class="btn-edit-sm" onclick="editProp('${p.id}')">✏ Editar</button>
+        <button class="btn-del-sm" onclick="deleteProp('${p.id}')">🗑 Eliminar</button>
+      </div>`;
+    list.appendChild(item);
+  });
+}
+
+// ═══════════════════════════════════════════════════
+//  ADMIN: FOTOS
+// ═══════════════════════════════════════════════════
+let pendingPhotos = []; // base64 array for current form
+
+function handleFiles(files) {
+  Array.from(files).forEach(file => {
+    const reader = new FileReader();
+    reader.onload = e => {
+      pendingPhotos.push(e.target.result);
+      renderPhotoPreview();
+    };
+    reader.readAsDataURL(file);
+  });
+}
+function renderPhotoPreview() {
+  const container = document.getElementById('photo-preview');
+  container.innerHTML = '';
+  pendingPhotos.forEach((src,i) => {
+    const wrap = document.createElement('div');
+    wrap.className = 'photo-thumb-wrap';
+    wrap.innerHTML = `<img src="${src}" class="photo-thumb"><button class="remove-photo" onclick="removePhoto(${i})">×</button>`;
+    container.appendChild(wrap);
+  });
+}
+function removePhoto(i) {
+  pendingPhotos.splice(i,1);
+  renderPhotoPreview();
+}
+
+// ═══════════════════════════════════════════════════
+//  ADMIN: GUARDAR / EDITAR PROPIEDAD
+// ═══════════════════════════════════════════════════
+function clearForm() {
+  ['f-titulo','f-direccion','f-precio','f-metros','f-dorm','f-banos','f-amb','f-desc'].forEach(id=>{
+    document.getElementById(id).value='';
+  });
+  document.getElementById('f-op').value='venta';
+  document.getElementById('f-tipo').value='casa';
+  document.getElementById('f-moneda').value='USD';
+  document.getElementById('f-periodo').value='';
+  document.getElementById('edit-id').value='';
+  pendingPhotos=[];
+  renderPhotoPreview();
+  document.getElementById('file-input').value='';
+}
+function editProp(id) {
+  const p = _props.find(x => x.id === id);
+  if(!p) return;
+  document.getElementById('edit-id').value = id;
+  document.getElementById('f-titulo').value    = p.titulo||'';
+  document.getElementById('f-direccion').value = p.direccion||'';
+  document.getElementById('f-precio').value    = p.precio||'';
+  document.getElementById('f-metros').value    = p.metros||'';
+  document.getElementById('f-dorm').value      = p.dorm||'';
+  document.getElementById('f-banos').value     = p.banos||'';
+  document.getElementById('f-amb').value       = p.amb||'';
+  document.getElementById('f-desc').value      = p.desc||'';
+  document.getElementById('f-op').value        = p.op||'venta';
+  document.getElementById('f-tipo').value      = p.tipo||'casa';
+  document.getElementById('f-moneda').value    = p.moneda||'USD';
+  document.getElementById('f-periodo').value   = p.periodo||'';
+  pendingPhotos = [...(p.photos||[])];
+  renderPhotoPreview();
+  switchTab('nueva', document.querySelectorAll('.tab-btn')[1]);
+}
+async function saveProp() {
+  const titulo = document.getElementById('f-titulo').value.trim();
+  if(!titulo) { showToast('❌ El título es obligatorio'); return; }
+  const btn = document.querySelector('[onclick="saveProp()"]');
+  if(btn) { btn.disabled = true; btn.textContent = '⏳ Guardando...'; }
+  try {
+    const prop = {
+      titulo,
+      direccion : document.getElementById('f-direccion').value.trim(),
+      op        : document.getElementById('f-op').value,
+      tipo      : document.getElementById('f-tipo').value,
+      moneda    : document.getElementById('f-moneda').value,
+      precio    : document.getElementById('f-precio').value.trim(),
+      periodo   : document.getElementById('f-periodo').value,
+      metros    : document.getElementById('f-metros').value,
+      dorm      : document.getElementById('f-dorm').value,
+      banos     : document.getElementById('f-banos').value,
+      amb       : document.getElementById('f-amb').value,
+      desc      : document.getElementById('f-desc').value.trim(),
+      photos    : [...pendingPhotos],
+    };
+    const editId = document.getElementById('edit-id').value;
+    if(editId !== '') {
+      await updateProp(editId, prop);
+      showToast('✅ Propiedad actualizada');
+    } else {
+      await addProp(prop);
+      showToast('✅ Propiedad guardada');
+    }
+    clearForm();
+    switchTab('propiedades', document.querySelectorAll('.tab-btn')[0]);
+  } catch(e) {
+    showToast('❌ Error al guardar: ' + e.message);
+  } finally {
+    if(btn) { btn.disabled = false; btn.textContent = '💾 Guardar propiedad'; }
+  }
+}
+async function deleteProp(id) {
+  if(!confirm('¿Seguro que querés eliminar esta propiedad?')) return;
+  const p = _props.find(x => x.id === id);
+  try {
+    await dbDeleteProp(id, p?.photos || []);
+    showToast('🗑 Propiedad eliminada');
+  } catch(e) {
+    showToast('❌ Error al eliminar: ' + e.message);
+  }
+}
+
+// ═══════════════════════════════════════════════════
+//  ADMIN: CONFIG SITIO
+// ═══════════════════════════════════════════════════
+function handleLogoFile(input) {
+  const file = input.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    const preview = document.getElementById('config-logo-preview');
+    preview.src = e.target.result;
+    preview.classList.add('loaded');
+  };
+  reader.readAsDataURL(file);
+}
+function loadConfigForm() {
+  const c = _config;
+  document.getElementById('c-nombre').value   = c.nombre   ||'';
+  document.getElementById('c-slogan').value   = c.slogan   ||'';
+  document.getElementById('c-domicilio').value= c.domicilio||'';
+  document.getElementById('c-telefono').value = c.telefono ||'';
+  document.getElementById('c-email').value    = c.email    ||'';
+  document.getElementById('c-wa').value       = c.wa       ||'';
+  document.getElementById('c-facebook').value = c.facebook ||'';
+  document.getElementById('c-instagram').value= c.instagram||'';
+  if(c.logo) {
+    const preview = document.getElementById('config-logo-preview');
+    preview.src = c.logo; preview.classList.add('loaded');
+  }
+}
+async function saveConfig() {
+  const logoPreview = document.getElementById('config-logo-preview');
+  const config = {
+    nombre    : document.getElementById('c-nombre').value.trim(),
+    slogan    : document.getElementById('c-slogan').value.trim(),
+    domicilio : document.getElementById('c-domicilio').value.trim(),
+    telefono  : document.getElementById('c-telefono').value.trim(),
+    email     : document.getElementById('c-email').value.trim(),
+    wa        : document.getElementById('c-wa').value.trim(),
+    facebook  : document.getElementById('c-facebook').value.trim(),
+    instagram : document.getElementById('c-instagram').value.trim(),
+    logo      : logoPreview.classList.contains('loaded') ? logoPreview.src : (_config.logo||''),
+  };
+  try {
+    await dbSaveConfig(config);
+    showToast('✅ Datos del sitio actualizados');
+  } catch(e) {
+    showToast('❌ Error al guardar: ' + e.message);
+  }
+}
+function applyConfig(c) {
+  if(!c) return;
+  // Logo
+  const logoImg = document.getElementById('header-logo-img');
+  if(c.logo) { logoImg.src = c.logo; logoImg.classList.add('loaded'); }
+  else { logoImg.classList.remove('loaded'); }
+  // Nombre
+  const nombre = c.nombre || 'Mi Inmobiliaria';
+  const parts  = nombre.split(' ');
+  const last   = parts.pop();
+  document.getElementById('header-logo-text').innerHTML = parts.join(' ') + (parts.length?' ':'')+`<span>${last}</span>`;
+  document.getElementById('footer-logo-text').textContent = nombre;
+  document.getElementById('footer-bottom').textContent = `© ${new Date().getFullYear()} ${nombre}. Todos los derechos reservados.`;
+  document.title = nombre;
+  // Slogan
+  const slogan = c.slogan || 'Tu hogar, nuestra prioridad';
+  document.getElementById('header-slogan-text').textContent = slogan;
+  document.getElementById('hero-subtitle').textContent = slogan;
+  document.getElementById('footer-slogan').textContent = slogan;
+  // Topbar / footer contact
+  const phone   = c.telefono || 'Sin configurar';
+  const email   = c.email    || '';
+  const wa      = c.wa       || '';
+  const address = c.domicilio|| '';
+  document.getElementById('topbar-phone-text').textContent = phone;
+  document.getElementById('topbar-phone').href = c.telefono ? 'tel:'+c.telefono.replace(/\s/g,'') : '#';
+  document.getElementById('topbar-email-text').textContent = email || 'Sin configurar';
+  document.getElementById('topbar-email').href = email ? 'mailto:'+email : '#';
+  document.getElementById('topbar-address-text').textContent = address;
+  const waLink = wa ? `https://api.whatsapp.com/send?phone=${wa}&text=${encodeURIComponent('Hola! Quisiera información sobre propiedades.')}` : '#';
+  document.getElementById('topbar-wa').href = waLink;
+  document.getElementById('footer-address').textContent = address || '—';
+  document.getElementById('footer-phone').textContent = phone;
+  document.getElementById('footer-phone').href = c.telefono ? 'tel:'+c.telefono.replace(/\s/g,'') : '#';
+  document.getElementById('footer-email-link').textContent = email || '—';
+  document.getElementById('footer-email-link').href = email ? 'mailto:'+email : '#';
+}
+
+// ── drag & drop ──
+const uz = document.getElementById('upload-zone');
+uz.addEventListener('dragover', e => { e.preventDefault(); uz.style.borderColor='var(--primary)'; });
+uz.addEventListener('dragleave', () => { uz.style.borderColor=''; });
+uz.addEventListener('drop', e => { e.preventDefault(); uz.style.borderColor=''; handleFiles(e.dataTransfer.files); });
+
+// close modal clicking outside
+document.getElementById('admin-modal').addEventListener('click', function(e) {
+  if(e.target === this) closeAdmin();
+});
+
+// ── INIT ──
+document.addEventListener('DOMContentLoaded', async () => {
+  // Cargamos el hash de contraseña
+  _pwHash = await getPasswordHash();
+
+  // Suscripción en tiempo real a propiedades
+  onPropsChange(props => {
+    _props = props;
+    renderCards();
+    // Si el panel admin está abierto, actualizamos la lista
+    if(document.getElementById('admin-panel').style.display !== 'none') {
+      loadAdminPropList();
+    }
+  });
+
+  // Suscripción en tiempo real a config
+  onConfigChange(config => {
+    _config = config;
+    applyConfig(config);
+    renderCards();
+  });
+});
+</script>
+</body>
+</html>
